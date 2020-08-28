@@ -9,10 +9,10 @@
  *
  * @param {Temporal.Absolute} then - Instant since when to measure the duration
  * @param {Temporal.Absolute} now - Instant until when to measure the duration
- * @param {string} [largestUnit=days] - Largest time unit to have in the result
+ * @param {string} [largestUnit=hours] - Largest time unit to have in the result
  * @returns {ElapsedDuration} Time between `then` and `now`
  */
-function getElapsedDurationSinceInstant(then, now, largestUnit = 'days') {
+function getElapsedDurationSinceInstant(then, now, largestUnit = 'hours') {
   const sign = Temporal.Absolute.compare(now, then) < 0 ? '-' : '+';
   const duration = sign === '-' ? then.difference(now, { largestUnit }) : now.difference(then, { largestUnit });
   return { sign, duration };

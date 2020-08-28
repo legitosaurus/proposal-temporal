@@ -47,14 +47,13 @@ export class Absolute {
   plus(temporalDurationLike) {
     if (!ES.IsTemporalAbsolute(this)) throw new TypeError('invalid receiver');
     const {
-      days,
       hours,
       minutes,
       seconds,
       milliseconds,
       microseconds,
       nanoseconds
-    } = ES.ToLimitedTemporalDuration(temporalDurationLike, ['years', 'months', 'weeks']);
+    } = ES.ToLimitedTemporalDuration(temporalDurationLike, ['years', 'months', 'weeks', 'days']);
 
     let add = bigInt(0);
     add = add.plus(bigInt(nanoseconds));
@@ -63,7 +62,6 @@ export class Absolute {
     add = add.plus(bigInt(seconds).multiply(1e9));
     add = add.plus(bigInt(minutes).multiply(60 * 1e9));
     add = add.plus(bigInt(hours).multiply(60 * 60 * 1e9));
-    add = add.plus(bigInt(days).multiply(24 * 60 * 60 * 1e9));
 
     const ns = bigInt(GetSlot(this, EPOCHNANOSECONDS)).plus(add);
     ES.RejectAbsoluteRange(ns);
@@ -76,14 +74,13 @@ export class Absolute {
   minus(temporalDurationLike) {
     if (!ES.IsTemporalAbsolute(this)) throw new TypeError('invalid receiver');
     const {
-      days,
       hours,
       minutes,
       seconds,
       milliseconds,
       microseconds,
       nanoseconds
-    } = ES.ToLimitedTemporalDuration(temporalDurationLike, ['years', 'months', 'weeks']);
+    } = ES.ToLimitedTemporalDuration(temporalDurationLike, ['years', 'months', 'weeks', 'days']);
 
     let add = bigInt(0);
     add = add.plus(bigInt(nanoseconds));
@@ -92,7 +89,6 @@ export class Absolute {
     add = add.plus(bigInt(seconds).multiply(1e9));
     add = add.plus(bigInt(minutes).multiply(60 * 1e9));
     add = add.plus(bigInt(hours).multiply(60 * 60 * 1e9));
-    add = add.plus(bigInt(days).multiply(24 * 60 * 60 * 1e9));
 
     const ns = bigInt(GetSlot(this, EPOCHNANOSECONDS)).minus(add);
     ES.RejectAbsoluteRange(ns);
@@ -105,7 +101,7 @@ export class Absolute {
   difference(other, options) {
     if (!ES.IsTemporalAbsolute(this)) throw new TypeError('invalid receiver');
     if (!ES.IsTemporalAbsolute(other)) throw new TypeError('invalid Absolute object');
-    const largestUnit = ES.ToLargestTemporalUnit(options, 'seconds', ['years', 'months', 'weeks']);
+    const largestUnit = ES.ToLargestTemporalUnit(options, 'seconds', ['years', 'months', 'weeks', 'days']);
 
     const comparison = Absolute.compare(this, other);
     if (comparison < 0) throw new RangeError('other instance cannot be larger than `this`');
@@ -119,7 +115,7 @@ export class Absolute {
     const ss = +diff.divide(1e9);
 
     const Duration = GetIntrinsic('%Temporal.Duration%');
-    const { days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds } = ES.BalanceDuration(
+    const { hours, minutes, seconds, milliseconds, microseconds, nanoseconds } = ES.BalanceDuration(
       0,
       0,
       0,
@@ -129,7 +125,7 @@ export class Absolute {
       ns,
       largestUnit
     );
-    return new Duration(0, 0, 0, days, hours, minutes, seconds, milliseconds, microseconds, nanoseconds);
+    return new Duration(0, 0, 0, 0, hours, minutes, seconds, milliseconds, microseconds, nanoseconds);
   }
   equals(other) {
     if (!ES.IsTemporalAbsolute(this)) throw new TypeError('invalid receiver');
